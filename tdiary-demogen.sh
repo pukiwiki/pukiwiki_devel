@@ -1,22 +1,28 @@
 #!/bin/sh
-# $Id: tdiary-demogen.sh,v 1.6 2005/01/16 03:26:14 henoheno Exp $
+# $Id: tdiary-demogen.sh,v 1.7 2005/01/25 12:47:11 henoheno Exp $
 #
 # tDiary demonstration generator: generates many [theme].php
 # License: GPL
 
+warn(){ echo "$*" 1>&2; }
+err(){ warn "$*"; exit 1; }
+
 usage(){
   base="`basename $0`";
-  echo "  $base [-d path/to/theme-directory] list"
-  echo "  $base [-d path/to/theme-directory] interwiki"
-  echo "  $base [-d path/to/theme-directory] touch"
-  echo "    Command:"
-  echo "      lis|list      - List themes"
-  echo "      int|interwiki - Publish interwiki definition and setting for each theme"
-  echo "      tou|touch     - Generate \$theme.php that includes index.php"
+  warn "  $base [-d path/to/theme-directory] list"
+  warn "  $base [-d path/to/theme-directory] interwiki"
+  warn "  $base [-d path/to/theme-directory] touch"
+  warn "  $base [-d path/to/theme-directory] untouch"
+  warn "    Command:"
+  warn "      lis|list      - List themes"
+  warn "      int|interwiki - Publish interwiki definition and setting for each theme"
+  warn "      tou|touch     - Generate \$theme.php that includes index.php"
+  warn "      unt|untouch   - Remove \$theme.php(s) listed in theme directory"
+  exit 1
 }
 
 theme_list(){
-  cd "$dir" || echo "Error: directory '$dir' not found";
+  cd "$dir" || err "Error: directory '$dir' not found"
   ls -1 | while read theme; do
     test -f "$theme/$theme.css" && echo "$theme"
   done
@@ -61,6 +67,20 @@ tou|touc|touch )
 EOF
     fi
   done
+  ;;
+
+unt|unto|untou|untouc|untouch )
+  echo -n "  Remove theme(s).php ? [y/N]: "
+  read answer
+  case "$answer" in
+  [yY] | [yY][eE][sS] )
+    theme_list | while read theme ; do
+      test -f "$theme.php" && grep -q "define('TDIARY_THEME', '$theme');" "$theme.php" && rm -f "$theme.php"
+    done
+    ;;
+  * )
+    echo "  Stopped."
+  esac
   ;;
 esac
 
