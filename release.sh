@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.5 2004/09/04 12:10:22 henoheno Exp $
+# $Id: release.sh,v 1.6 2004/09/07 12:57:27 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 # Release automation script
 #  ==========================================================
@@ -82,6 +82,10 @@ echo find "$pkg_dir" -type f -name '.cvsignore' -delete
 # Tar
 echo tar cf - "$pkg_dir" \| gzip -9 \> "$pkg_dir.tar.gz"
      tar cf - "$pkg_dir"  | gzip -9  > "$pkg_dir.tar.gz"
+
+# Zip
+echo zip -r9 "$pkg_dir.zip" "$pkg_dir"
+     zip -r9 "$pkg_dir.zip" "$pkg_dir"
 
 #echo rm -Rf   "$pkg_dir"
 #     rm -Rf   "$pkg_dir"
