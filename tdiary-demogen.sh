@@ -1,7 +1,7 @@
 #!/bin/sh
-# $Id: tdiary-demogen.sh,v 1.1 2005/01/09 04:07:04 henoheno Exp $
+# $Id: tdiary-demogen.sh,v 1.2 2005/01/09 04:07:31 henoheno Exp $
 #
-# tDiary demonstrator generator
+# tDiary demonstration generator: generates many [theme].php
 # License: GPL
 
 usage(){
