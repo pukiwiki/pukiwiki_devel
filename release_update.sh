@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release_update.sh,v 1.10 2005/03/21 13:56:29 henoheno Exp $
+# $Id: release_update.sh,v 1.11 2005/03/21 14:08:50 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -12,7 +12,7 @@
 _name="` basename $0 `"
 
 usage(){
-  warn "USAGE: `basename $0` VERSION_FROM VERSION_TO (VERSION = '1.4.3_rc1' like)"
+  warn "USAGE: $_name [options] VERSION_FROM VERSION_TO (VERSION = '1.4.3_rc1' like)"
   warn "  Options:"
   warn  "    -z|--zip    Create *.zip archive"
   warn  "    --move-dist Move *.ini.php => *.ini-dist.php"
