@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release_update.sh,v 1.1 2004/09/11 14:22:14 henoheno Exp $
+# $Id: release_update.sh,v 1.2 2004/09/11 14:27:02 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -108,12 +108,12 @@ find "$pkg_dir" -type d -empty | xargs rmdir
 )
 
 # Tar
-echo tar cf - "$pkg_dir" \| gzip -9 \> "$pkg_dir.tar.gz"
-     tar cf - "$pkg_dir"  | gzip -9  > "update_.tar.gz"
+echo tar cf - "$pkg_dir" \| gzip -9 \> "update_$rel_to.tar.gz"
+     tar cf - "$pkg_dir"  | gzip -9  > "update_$rel_to.tar.gz"
 
 # Zip
-echo zip -r9 "$pkg_dir.zip" "$pkg_dir"
-     zip -r9 "$pkg_dir.zip" "$pkg_dir"
+echo zip -r9 "update_$rel_to.zip" "$pkg_dir"
+     zip -r9 "update_$rel_to.zip" "$pkg_dir"
 
 #echo rm -Rf   "$pkg_dir"
 #     rm -Rf   "$pkg_dir"
