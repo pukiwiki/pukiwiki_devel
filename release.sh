@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.12 2005/01/09 04:34:57 henoheno Exp $
+# $Id: release.sh,v 1.13 2005/02/15 14:20:20 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -138,7 +138,7 @@ echo find "$pkg_dir" -type f -name '.cvsignore' -delete
 
   # Add write permission for PukiWiki
   chmod 777 attach backup cache counter diff trackback wiki*
-  chmod 666 wiki*/*.txt cache/*.dat
+  chmod 666 wiki*/*.txt cache/*.dat cache/*.ref cache/*.rel
 )
 
 # Create a package ------------------------------------------
