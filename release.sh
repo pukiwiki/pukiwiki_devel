@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.1 2004/09/01 11:53:03 henoheno Exp $
+# $Id: release.sh,v 1.2 2004/09/01 12:20:27 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 # Release automation script
 #  ==========================================================
@@ -53,9 +53,17 @@ echo find "$pkg_dir" -type f -name '.cvsignore' -delete
 
 # chmod
 ( cd "$pkg_dir"
-  chmod 777 attach backup cache counter diff trackback wiki 2>/dev/null
-  chmod 666 wiki*/*.txt cache/*.dat 2>/dev/null
-)
+
+  # ALL: Read only
+  find . -type f | while read line; do
+      chmod 644 "$line"
+    done
+
+  # Add write permission for PukiWiki
+  chmod 777 attach backup cache counter diff trackback wiki*
+  chmod 666 wiki*/*.txt cache/*.dat
+
+) 2>/dev/null
 
 # Tar
 echo tar cf - "$pkg_dir" \| gzip -9 \> "$pkg_dir.tar.gz"
