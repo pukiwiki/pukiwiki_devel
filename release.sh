@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.2 2004/09/01 12:20:27 henoheno Exp $
+# $Id: release.sh,v 1.3 2004/09/01 12:22:20 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 # Release automation script
 #  ==========================================================
@@ -63,7 +63,7 @@ echo find "$pkg_dir" -type f -name '.cvsignore' -delete
   chmod 777 attach backup cache counter diff trackback wiki*
   chmod 666 wiki*/*.txt cache/*.dat
 
-) 2>/dev/null
+)
 
 # Tar
 echo tar cf - "$pkg_dir" \| gzip -9 \> "$pkg_dir.tar.gz"
