@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: tdiary-demogen.sh,v 1.3 2005/01/10 09:25:47 henoheno Exp $
+# $Id: tdiary-demogen.sh,v 1.4 2005/01/15 03:31:37 henoheno Exp $
 #
 # tDiary demonstration generator: generates many [theme].php
 # License: GPL
@@ -41,7 +41,7 @@ int|inte|inter|interw|interwi|interwik|interwiki)
   echo '- [./$1.php theme] raw tDiary theme selector'
   echo '--------'
   theme_list | while read theme; do
-    echo "[[theme:$theme]]"
+    echo "+ [[theme:$theme]]"
   done
   ;;
 
