@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release_update.sh,v 1.8 2005/03/21 12:56:48 henoheno Exp $
+# $Id: release_update.sh,v 1.9 2005/03/21 13:46:37 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -72,8 +72,8 @@ getopt(){ _arg=noarg
   -[hH]|--help ) echo _help _exit ;;
   --debug      ) echo _debug      ;;
   -z|--zip     ) echo _zip        ;;
-  #--copy-dist  ) echo _copy_dist  ;;
-  #--move-dist  ) echo _move_dist  ;;
+  --copy-dist  ) echo _copy_dist  ;;
+  --move-dist  ) echo _move_dist  ;;
   -d  ) echo _CVSROOT 2 ; _arg="$2" ;;
   -*  ) warn "Error: Unknown option \"$1\"" ; return 1 ;;
    *  ) echo OTHER ;;
@@ -161,6 +161,18 @@ echo find "$pkg_dir" -type f -name '.cvsignore' -delete
 # Remove emptied directories (twice)
 find "$pkg_dir" -type d -empty | xargs rmdir
 find "$pkg_dir" -type d -empty | xargs rmdir
+
+# Move / Copy *.ini.php files
+if [ 'x' != "x$__copy_dist$__move_dist" ] ; then
+( cd "$pkg_dir"
+
+  find . -type f -name "*.ini.php" | while read file; do
+    dist_file="` echo "$file" | sed 's/ini\.php$/ini-dist.php/' `"
+    mv -f "$file" "$dist_file"
+    test "$__copy_dist" && cp -f "$dist_file" "$file"
+  done
+)
+fi
 
 # chmod
 chmod_pkg "$pkg_dir"
