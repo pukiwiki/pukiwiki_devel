@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release_update.sh,v 1.2 2004/09/11 14:27:02 henoheno Exp $
+# $Id: release_update.sh,v 1.3 2004/09/11 14:29:50 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -72,9 +72,9 @@ test   -d "$pkg_dir" || err "There isn't a directory: $pkg_dir"
 ( cd "$pkg_dir"
 
   find . -type f | grep -v /CVS/ | while read line ; do
-    result="` cvs -nq up "$line" | grep '^[AM] ' | cut -b 3- 2>/dev/null `"
+    result="` cvs -nq up "$line" 2>/dev/null | grep '^[AM] ' | cut -b 3- `"
     test "x$result" != "x" || rm -f "$line"
-    ecno -n "."
+    echo -n "."
   done
   echo
 )
