@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release_update.sh,v 1.4 2004/09/11 14:58:39 henoheno Exp $
+# $Id: release_update.sh,v 1.5 2004/09/11 15:13:47 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -61,8 +61,8 @@ test   -d "$pkg_dir" || err "There isn't a directory: $pkg_dir"
 
 # Merge VERSION_FROM to VERSION_TO
 ( cd "$pkg_dir"
-  echo cvs up -j "$tag_from" -j "$tag_to"
-       cvs up -j "$tag_from" -j "$tag_to"
+  echo cvs up -dP -j "$tag_from" -j "$tag_to"
+       cvs up -dP -j "$tag_from" -j "$tag_to"
 
   # Cleanup backup files by cvs
   find . -type f -name ".#*" | xargs rm -f
