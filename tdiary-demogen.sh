@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: tdiary-demogen.sh,v 1.2 2005/01/09 04:07:31 henoheno Exp $
+# $Id: tdiary-demogen.sh,v 1.3 2005/01/10 09:25:47 henoheno Exp $
 #
 # tDiary demonstration generator: generates many [theme].php
 # License: GPL
@@ -7,10 +7,10 @@
 usage(){
   base="`basename $0`";
   echo "  $base [-d path/to/theme-directory] list"
-  echo "  $base [-d path/to/theme-directory] interwiki [URI]"
+  echo "  $base [-d path/to/theme-directory] interwiki"
   echo "  $base [-d path/to/theme-directory] touch"
   echo "    Command:"
-  echo "      lis|listt     - List theme"
+  echo "      lis|list      - List themes"
   echo "      int|interwiki - Publish interwiki definition and setting for each theme"
   echo "      tou|touch     - Generate \$theme.php that includes index.php"
 }
