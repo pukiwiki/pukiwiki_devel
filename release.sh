@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.15 2005/02/20 14:51:52 henoheno Exp $
+# $Id: release.sh,v 1.16 2005/03/21 11:43:49 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -15,8 +15,10 @@ usage(){
   trace 'usage()' || return  # (DEBUG)
   warn  "Usage: $_name [options] VERSION_TAG (1.4.3_rc1 like)"
   warn  "  Options:"
-  warn  "    --nopkg   Suppress creating archive (Extract and chmod only)"
-  warn  "    -z|--zip  Create *.zip archive"
+  warn  "    --nopkg     Suppress creating archive (Extract and chmod only)"
+  warn  "    -z|--zip    Create *.zip archive"
+  warn  "    --move-dist Move *.ini.php => *.ini-dist.php"
+  warn  "    --copy-dist Move, and Copy *.ini.php <= *.ini-dist.php"
   return 1
 }
 
@@ -51,6 +53,8 @@ getopt(){ _arg=noarg
   --debug      ) echo _debug      ;;
   --nopkg      ) echo _nopkg      ;;
   -z|--zip     ) echo _zip        ;;
+  --copy-dist  ) echo _copy_dist  ;;
+  --move-dist  ) echo _move_dist  ;;
   -d  ) echo _CVSROOT 2 ; _arg="$2" ;;
   -*  ) warn "Error: Unknown option \"$1\"" ; return 1 ;;
    *  ) echo OTHER ;;
@@ -120,6 +124,9 @@ test ! -d "$pkg_dir" || err "There's already a directory: $pkg_dir"
 echo cvs -z3 -d "$CVSROOT" -q export -r "$tag" -d "$pkg_dir" "$mod"
      cvs -z3 -d "$CVSROOT" -q export -r "$tag" -d "$pkg_dir" "$mod"
 
+#echo cvs -z3 -d "$CVSROOT" -q co -r "$tag" -d "$pkg_dir" "$mod"
+#     cvs -z3 -d "$CVSROOT" -q co -r "$tag" -d "$pkg_dir" "$mod"
+
 test   -d "$pkg_dir" || err "There is'nt a directory: $pkg_dir"
 
 # Remove '.cvsignore' if exists -----------------------------
@@ -166,6 +173,18 @@ test ! -z "$__nopkg" && exit 0
     done
   fi
 )
+
+# Move / Copy *.ini.php files
+if [ 'x' != "x$__copy_dist$__move_dist" ] ; then
+( cd "$pkg_dir"
+
+  find . -type f -name "*.ini.php" | while read file; do
+    dist_file="` echo "$file" | sed 's/ini\.php$/ini-dist.php/' `"
+    mv -f "$file" "$dist_file"
+    test "$__copy_dist" && cp -f "$dist_file" "$file"
+  done
+)
+fi
 
 if [ -z "$__zip" ]
 then
