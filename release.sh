@@ -1,7 +1,7 @@
 #!/bin/sh
-# $Id: release.sh,v 1.6 2004/09/07 12:57:27 henoheno Exp $
+# $Id: release.sh,v 1.7 2004/09/11 15:53:23 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
-# Release automation script
+#  Release automation script for PukiWiki
 #  ==========================================================
    Copyright='(C) 2002-2004 minix-up project, All Rights Reserved'
    Homepage='http://cvsknit.sourceforge.net/'
@@ -40,8 +40,8 @@ pkg_dir="${mod}-${rel}"
 
 # -------------------------------------------
 
-# Checkout the module
-test ! -d "$pkg_dir" || err "There's already a directory: $mod"
+# Export the module
+test ! -d "$pkg_dir" || err "There's already a directory: $pkg_dir"
 echo cvs -z3 -d "$CVSROOT" export -r "$tag" -d "$pkg_dir" "$mod"
      cvs -z3 -d "$CVSROOT" export -r "$tag" -d "$pkg_dir" "$mod"
 test   -d "$pkg_dir" || err "There is'nt a directory: $pkg_dir"
