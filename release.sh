@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.10 2004/12/31 00:59:41 henoheno Exp $
+# $Id: release.sh,v 1.11 2005/01/09 04:28:59 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -13,8 +13,9 @@ _name="` basename $0 `"
 
 usage(){
   trace 'usage()' || return  # (DEBUG)
-  warn  "Usage: $_name [-z] VERSION_TAG (1.4.3_rc1 like)"
+  warn  "Usage: $_name [options] VERSION_TAG (1.4.3_rc1 like)"
   warn  "  Options:"
+  warn  "    --nopkg   Suppress creating archive (Extract and chmod only)"
   warn  "    -z|--zip  Create *.zip archive"
   return 1
 }
@@ -48,6 +49,7 @@ getopt(){ _arg=noarg
   ''  )  echo 1 ;;
   -[hH]|--help ) echo _help _exit ;;
   --debug      ) echo _debug      ;;
+  --nopkg      ) echo _nopkg      ;;
   -z|--zip     ) echo _zip        ;;
   -d  ) echo _CVSROOT 2 ; _arg="$2" ;;
   -*  ) warn "Error: Unknown option \"$1\"" ; return 1 ;;
@@ -138,7 +140,10 @@ echo find "$pkg_dir" -type f -name '.cvsignore' -delete
   chmod 666 wiki*/*.txt cache/*.dat
 )
 
-# Compress --------------------------------------------------
+# Create a package ------------------------------------------
+
+test ! -z "$__nopkg" && exit 0
+
 ( cd "$pkg_dir"
 
   # wiki.en/
