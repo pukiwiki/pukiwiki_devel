@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: tdiary-demogen.sh,v 1.5 2005/01/15 14:54:46 henoheno Exp $
+# $Id: tdiary-demogen.sh,v 1.6 2005/01/16 03:26:14 henoheno Exp $
 #
 # tDiary demonstration generator: generates many [theme].php
 # License: GPL
@@ -40,9 +40,10 @@ int|inte|inter|interw|interwi|interwik|interwiki)
   echo '--------'
   echo '- [./$1.php theme] raw tDiary theme selector'
   echo '--------'
+  echo '- (s) = sidebar CSS exists in this theme'
   theme_list | while read theme; do
     echo -n "+ [[theme:$theme]]"
-    grep -q div.sidebar "$dir/$theme/$theme.css" && echo -n " (sidebar)"
+    grep -q div.sidebar "$dir/$theme/$theme.css" && echo -n " (s)"
     echo
   done
   ;;
