@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.11 2005/01/09 04:28:59 henoheno Exp $
+# $Id: release.sh,v 1.12 2005/01/09 04:34:57 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -107,6 +107,7 @@ case "$rel" in
   [1-9].[0-9]_rc[1-9]      | [1-9].[0-9]_rc[1-9]           ) tag="r$rel" ;;
   [1-9].[0-9].[0-9]        | [1-9].[0-9].[0-9][0-9]        ) tag="r$rel" ;;
   [1-9].[0-9].[0-9]_[a-z]* | [1-9].[0-9].[0-9][0-9]_[a-z]* ) tag="r$rel" ;;
+  HEAD | r1_3_3_branch ) tag="$rel" ;;
   * ) usage ; exit ;;
 esac
 tag="` echo "$tag" | tr '.' '_' `"
