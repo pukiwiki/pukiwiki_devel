@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.9 2004/10/18 14:31:15 henoheno Exp $
+# $Id: release.sh,v 1.10 2004/12/31 00:59:41 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -13,7 +13,9 @@ _name="` basename $0 `"
 
 usage(){
   trace 'usage()' || return  # (DEBUG)
-  warn  "Usage: $_name VERSION_TAG (1.4.3_rc1 like)"
+  warn  "Usage: $_name [-z] VERSION_TAG (1.4.3_rc1 like)"
+  warn  "  Options:"
+  warn  "    -z|--zip  Create *.zip archive"
   return 1
 }
 
@@ -46,7 +48,7 @@ getopt(){ _arg=noarg
   ''  )  echo 1 ;;
   -[hH]|--help ) echo _help _exit ;;
   --debug      ) echo _debug      ;;
-  --zip        ) echo _zip        ;;
+  -z|--zip     ) echo _zip        ;;
   -d  ) echo _CVSROOT 2 ; _arg="$2" ;;
   -*  ) warn "Error: Unknown option \"$1\"" ; return 1 ;;
    *  ) echo OTHER ;;
@@ -88,10 +90,10 @@ if [ $# -eq 0 ] ; then usage ; exit ; fi
 
 if [ -z "$__zip" ]
 then
-  which tar  || exit
-  which gzip || exit
+  which tar  || err "tar not found"
+  which gzip || err "gzip not found"
 else
-  which zip  || exit
+  which zip  || err "zip not found"
 fi > /dev/null
 
 # Argument check --------------------------------------------
@@ -160,7 +162,7 @@ echo find "$pkg_dir" -type f -name '.cvsignore' -delete
 
 if [ -z "$__zip" ]
 then
-  # Tar
+  # Tar + gzip
   echo tar cf - "$pkg_dir" \| gzip -9 \> "$pkg_dir.tar.gz"
        tar cf - "$pkg_dir"  | gzip -9  > "$pkg_dir.tar.gz"
 else
