@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.3 2004/09/01 12:22:20 henoheno Exp $
+# $Id: release.sh,v 1.4 2004/09/01 12:46:58 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 # Release automation script
 #  ==========================================================
@@ -55,6 +55,9 @@ echo find "$pkg_dir" -type f -name '.cvsignore' -delete
 ( cd "$pkg_dir"
 
   # ALL: Read only
+  find . -type d | while read line; do
+      chmod 755 "$line"
+    done
   find . -type f | while read line; do
       chmod 644 "$line"
     done
