@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release_update.sh,v 1.7 2005/03/21 12:28:38 henoheno Exp $
+# $Id: release_update.sh,v 1.8 2005/03/21 12:56:48 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -44,6 +44,17 @@ check_versiontag(){
   echo "$tag" | tr '.' '_'
 }
 
+chmod_pkg(){
+  ( cd "$1"
+    # ALL: Read only
+    find . -type d | while read line; do chmod 755 "$line"; done
+    find . -type f | while read line; do chmod 644 "$line"; done
+    # Add write permission for PukiWiki
+    chmod 777 attach backup cache counter diff trackback wiki* 2>/dev/null
+    chmod 666 wiki*/*.txt cache/*.dat cache/*.ref cache/*.rel  2>/dev/null
+  )
+}
+
 # Default variables -----------------------------------------
 
 mod=pukiwiki
@@ -60,7 +71,7 @@ getopt(){ _arg=noarg
   ''  )  echo 1 ;;
   -[hH]|--help ) echo _help _exit ;;
   --debug      ) echo _debug      ;;
-  #-z|--zip     ) echo _zip        ;;
+  -z|--zip     ) echo _zip        ;;
   #--copy-dist  ) echo _copy_dist  ;;
   #--move-dist  ) echo _move_dist  ;;
   -d  ) echo _CVSROOT 2 ; _arg="$2" ;;
@@ -128,6 +139,7 @@ test   -d "$pkg_dir" || err "There isn't a directory: $pkg_dir"
 )
 
 # Remove files those are not Added or Modified
+echo -n "Remove files those are not Added or Modified ..."
 ( cd "$pkg_dir"
 
   find . -type f | grep -v /CVS/ | while read line ; do
@@ -139,40 +151,30 @@ test   -d "$pkg_dir" || err "There isn't a directory: $pkg_dir"
 )
 
 # Remove CVS directories
-  find "$pkg_dir" -type d -name "CVS" | xargs rm -Rf
+echo "Remove CVS directories ..."
+find "$pkg_dir" -type d -name "CVS" | xargs rm -Rf
 
 # Remove '.cvsignore' if exists
 echo find "$pkg_dir" -type f -name '.cvsignore' -delete
      find "$pkg_dir" -type f -name '.cvsignore' -delete
 
-# Remove emptied directories
+# Remove emptied directories (twice)
 find "$pkg_dir" -type d -empty | xargs rmdir
 find "$pkg_dir" -type d -empty | xargs rmdir
 
 # chmod
-( cd "$pkg_dir"
+chmod_pkg "$pkg_dir"
 
-  # ALL: Read only
-  find . -type d | while read line; do
-      chmod 755 "$line"
-    done
-  find . -type f | while read line; do
-      chmod 644 "$line"
-    done
-
-  # Add write permission for PukiWiki
-  chmod 777 attach backup cache counter diff trackback wiki* 2>/dev/null
-  chmod 666 wiki*/*.txt cache/*.dat 2>/dev/null
-
-)
-
-# Tar
-echo tar cf - "$pkg_dir" \| gzip -9 \> "update_$rel_to.tar.gz"
-     tar cf - "$pkg_dir"  | gzip -9  > "update_$rel_to.tar.gz"
-
-# Zip
-#echo zip -r9 "update_$rel_to.zip" "$pkg_dir"
-#     zip -r9 "update_$rel_to.zip" "$pkg_dir"
+if [ -z "$__zip" ]
+then
+  # Tar
+  echo tar cf - "$pkg_dir" \| gzip -9 \> "update_$rel_to.tar.gz"
+       tar cf - "$pkg_dir"  | gzip -9  > "update_$rel_to.tar.gz"
+else
+  # Zip
+  echo zip -r9 "update_$rel_to.zip" "$pkg_dir"
+       zip -r9 "update_$rel_to.zip" "$pkg_dir"
+fi
 
 #echo rm -Rf   "$pkg_dir"
 #     rm -Rf   "$pkg_dir"
