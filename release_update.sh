@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release_update.sh,v 1.6 2005/02/20 14:51:26 henoheno Exp $
+# $Id: release_update.sh,v 1.7 2005/03/21 12:28:38 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -8,51 +8,109 @@
    License='BSD Licnese, NO WARRANTY'
 #
 
-# Functions -----------------------------------------------
-warn(){  echo "$*" 1>&2 ; }
-err() {  warn "Error: $*" ; exit 1 ; }
+# Name and Usage --------------------------------------------
+_name="` basename $0 `"
 
 usage(){
   warn "USAGE: `basename $0` VERSION_FROM VERSION_TO (VERSION = '1.4.3_rc1' like)"
   return 1
 }
 
+# Common functions ------------------------------------------
+warn(){  echo "$*" 1>&2 ; }
+err() {  warn "Error: $*" ; exit 1 ; }
+
+quote(){
+  test    $# -gt 0  && {  echo -n  "\"$1\"" ; shift ; }
+  while [ $# -gt 0 ] ; do echo -n " \"$1\"" ; shift ; done ; echo
+}
+
+trace(){
+  test "$__debug" || return 0  # (DEBUG)
+  _msg="$1" ; test $# -gt 0 && shift ; warn "  $_msg	: ` quote "$@" `"
+}
+
 check_versiontag(){
   case "$1" in
-    [1-9].[0-9]               | [1-9].[0-9]                    ) tag="r$1" ;;
-    [1-9].[0-9]_rc[1-9]       | [1-9].[0-9]_rc[1-9]            ) tag="r$1" ;;
-    [1-9].[0-9].[0-9]         | [1-9].[0-9].[0-9][0-9]         ) tag="r$1" ;;
-    [1-9].[0-9].[0-9]_rc[1-9] | [1-9].[0-9].[0-9][0-9]_rc[1-9] ) tag="r$1" ;;
-    [1-9].[0-9].[0-9]_[1-9]   | [1-9].[0-9].[0-9][0-9]_[1-9]   ) tag="r$1" ;;
+    [1-9].[0-9]              | [1-9].[0-9]                   ) tag="r$1" ;;
+    [1-9].[0-9]_rc[1-9]      | [1-9].[0-9]_rc[1-9]           ) tag="r$1" ;;
+    [1-9].[0-9].[0-9]        | [1-9].[0-9].[0-9][0-9]        ) tag="r$1" ;;
+    [1-9].[0-9].[0-9]_[a-z]* | [1-9].[0-9].[0-9][0-9]_[a-z]* ) tag="r$1" ;;
+    [1-9].[0-9].[0-9]_[1-9]  | [1-9].[0-9].[0-9][0-9]_[1-9]  ) tag="r$1" ;;
+    HEAD | r1_3_3_branch ) tag="$rel" ;;
     '' ) usage ; return 1 ;;
      * ) warn "Error: Invalid string: $1" ; usage ; return 1 ;;
   esac
   echo "$tag" | tr '.' '_'
 }
 
-# -------------------------------------------
-# Argument check
-
-rel_from="$1"
-rel_to="$2"
-
-tag_from="` check_versiontag "$rel_from" `" || exit
-tag_to="`   check_versiontag "$rel_to"   `" || exit
-
-if [ "x$rel_from" = "x$rel_to" ] ; then
-  warn "Error: VERSION_FROM and VERSION_TO is equivalent"
-  usage ; exit
-fi
-
-# -------------------------------------------
-# Default
+# Default variables -----------------------------------------
 
 mod=pukiwiki
 CVSROOT=":pserver:anonymous@cvs.sourceforge.jp:/cvsroot/$mod"
 
 pkg_dir="$mod"
 
-# -------------------------------------------
+# Function verifying arguments ------------------------------
+
+getopt(){ _arg=noarg
+  trace 'getopt()' "$@"  # (DEBUG)
+
+  case "$1" in
+  ''  )  echo 1 ;;
+  -[hH]|--help ) echo _help _exit ;;
+  --debug      ) echo _debug      ;;
+  #-z|--zip     ) echo _zip        ;;
+  #--copy-dist  ) echo _copy_dist  ;;
+  #--move-dist  ) echo _move_dist  ;;
+  -d  ) echo _CVSROOT 2 ; _arg="$2" ;;
+  -*  ) warn "Error: Unknown option \"$1\"" ; return 1 ;;
+   *  ) echo OTHER ;;
+  esac
+
+  test 'x' != "x$_arg"
+}
+
+# Working start ---------------------------------------------
+
+# Show arguments in one line (DEBUG)
+case '--debug' in "$1"|"$3") false ;; * ) true ;; esac || {
+  test 'x--debug' = "x$1" && shift ; __debug=on ; trace 'Args  ' "$@"
+}
+
+# Parsing
+while [ $# -gt 0 ] ; do
+  chs="` getopt "$@" `" || err "Syntax error with '$1'"
+  trace '$chs  ' "$chs"  # (DEBUG)
+
+  for ch in $chs ; do
+    case "$ch" in
+     [1-3]   ) shift $ch ;;
+     _exit   ) exit      ;;
+     _help   ) usage     ;;
+     _CVSROOT) CVSROOT="$2" ;;
+     _*      ) shift ; eval "_$ch"=on ;;
+      *      ) break 2   ;;
+    esac
+  done
+done
+
+# No argument
+if [ $# -eq 0 ] ; then usage ; exit ; fi
+
+# Argument check --------------------------------------------
+
+rel_from="$1"
+rel_to="$2"
+if [ "x$rel_from" = "x$rel_to" ] ; then
+  warn "Error: VERSION_FROM and VERSION_TO is equivalent"
+  usage ; exit
+fi
+
+tag_from="` check_versiontag "$rel_from" `" || exit
+tag_to="`   check_versiontag "$rel_to"   `" || exit
+
+# -----------------------------------------------------------
 
 # Checkout the module with VERSION_FROM
 test ! -d "$pkg_dir" || err "There's already a directory: $pkg_dir"
