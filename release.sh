@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.16 2005/03/21 11:43:49 henoheno Exp $
+# $Id: release.sh,v 1.17 2005/03/21 13:55:20 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -34,6 +34,31 @@ quote(){
 trace(){
   test "$__debug" || return 0  # (DEBUG)
   _msg="$1" ; test $# -gt 0 && shift ; warn "  $_msg	: ` quote "$@" `"
+}
+
+check_versiontag(){
+  case "$1" in
+    [1-9].[0-9]              | [1-9].[0-9]                   ) tag="r$1" ;;
+    [1-9].[0-9]_rc[1-9]      | [1-9].[0-9]_rc[1-9]           ) tag="r$1" ;;
+    [1-9].[0-9].[0-9]        | [1-9].[0-9].[0-9][0-9]        ) tag="r$1" ;;
+    [1-9].[0-9].[0-9]_[a-z]* | [1-9].[0-9].[0-9][0-9]_[a-z]* ) tag="r$1" ;;
+    [1-9].[0-9].[0-9]_[1-9]  | [1-9].[0-9].[0-9][0-9]_[1-9]  ) tag="r$1" ;;
+    HEAD | r1_3_3_branch ) tag="$rel" ;;
+    '' ) usage ; return 1 ;;
+     * ) warn "Error: Invalid string: $1" ; usage ; return 1 ;;
+  esac
+  echo "$tag" | tr '.' '_'
+}
+
+chmod_pkg(){
+  ( cd "$1"
+    # ALL: Read only
+    find . -type d | while read line; do chmod 755 "$line"; done
+    find . -type f | while read line; do chmod 644 "$line"; done
+    # Add write permission for PukiWiki
+    chmod 777 attach backup cache counter diff trackback wiki* 2>/dev/null
+    chmod 666 wiki*/*.txt cache/*.dat cache/*.ref cache/*.rel  2>/dev/null
+  )
 }
 
 # Default variables -----------------------------------------
@@ -105,17 +130,8 @@ fi > /dev/null
 # Argument check --------------------------------------------
 
 rel="$1"
+tag="` check_versiontag "$rel" `"
 pkg_dir="${mod}-${rel}"
-case "$rel" in
-  [1-9].[0-9]              | [1-9].[0-9]                   ) tag="r$rel" ;;
-  [1-9].[0-9]_rc[1-9]      | [1-9].[0-9]_rc[1-9]           ) tag="r$rel" ;;
-  [1-9].[0-9].[0-9]        | [1-9].[0-9].[0-9][0-9]        ) tag="r$rel" ;;
-  [1-9].[0-9].[0-9]_[a-z]* | [1-9].[0-9].[0-9][0-9]_[a-z]* ) tag="r$rel" ;;
-  [1-9].[0-9].[0-9]_[1-9]  | [1-9].[0-9].[0-9][0-9]_[1-9]  ) tag="r$rel" ;;
-  HEAD | r1_3_3_branch ) tag="$rel" ;;
-  * ) usage ; exit ;;
-esac
-tag="` echo "$tag" | tr '.' '_' `"
 
 # Export the module -----------------------------------------
 
@@ -134,20 +150,8 @@ echo find "$pkg_dir" -type f -name '.cvsignore' -delete
      find "$pkg_dir" -type f -name '.cvsignore' -delete
 
 # chmod -----------------------------------------------------
-( cd "$pkg_dir"
 
-  # ALL: Read only
-  find . -type d | while read line; do
-      chmod 755 "$line"
-    done
-  find . -type f | while read line; do
-      chmod 644 "$line"
-    done
-
-  # Add write permission for PukiWiki
-  chmod 777 attach backup cache counter diff trackback wiki*
-  chmod 666 wiki*/*.txt cache/*.dat cache/*.ref cache/*.rel
-)
+chmod_pkg "$pkg_dir"
 
 # Create a package ------------------------------------------
 
