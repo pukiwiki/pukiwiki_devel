@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.17 2005/03/21 13:55:20 henoheno Exp $
+# $Id: release.sh,v 1.18 2005/04/10 09:28:13 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -146,8 +146,8 @@ echo cvs -z3 -d "$CVSROOT" -q export -r "$tag" -d "$pkg_dir" "$mod"
 test   -d "$pkg_dir" || err "There is'nt a directory: $pkg_dir"
 
 # Remove '.cvsignore' if exists -----------------------------
-echo find "$pkg_dir" -type f -name '.cvsignore' -delete
-     find "$pkg_dir" -type f -name '.cvsignore' -delete
+echo find "$pkg_dir" -type f -name '.cvsignore' "| xargs rm -f"
+     find "$pkg_dir" -type f -name '.cvsignore' | xargs rm -f
 
 # chmod -----------------------------------------------------
 
