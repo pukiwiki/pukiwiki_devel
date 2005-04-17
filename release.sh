@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.19 2005/04/17 05:04:13 henoheno Exp $
+# $Id: release.sh,v 1.20 2005/04/17 05:13:18 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -17,6 +17,7 @@ usage(){
   warn  "  Options:"
   warn  "    --nopkg     Suppress creating archive (Extract and chmod only)"
   warn  "    --norm      --nopkg, and remove nothing (.cvsignore etc)"
+  warn  "    --co        --norm, and use 'checkout' command instead of 'export'"
   warn  "    -z|--zip    Create *.zip archive"
   warn  "    --move-dist Move *.ini.php => *.ini-dist.php"
   warn  "    --copy-dist Move, and Copy *.ini.php <= *.ini-dist.php"
@@ -76,12 +77,13 @@ getopt(){ _arg=noarg
   case "$1" in
   ''  )  echo 1 ;;
   -[hH]|--help ) echo _help _exit ;;
-  --debug      ) echo _debug      ;;
-  --nopkg      ) echo _nopkg      ;;
-  --norm|--noremove ) echo _noremove ;;
-  -z|--zip     ) echo _zip        ;;
-  --copy-dist  ) echo _copy_dist  ;;
-  --move-dist  ) echo _move_dist  ;;
+  --debug      ) echo _debug 1    ;;
+  --nopkg      ) echo _nopkg 1    ;;
+  --norm|--noremove ) echo _nopkg _noremove 1 ;;
+  --co|--checkout   ) echo _nopkg _noremove _checkout 1 ;;
+  -z|--zip     ) echo _zip 1      ;;
+  --copy-dist  ) echo _copy_dist 1 ;;
+  --move-dist  ) echo _move_dist 1 ;;
   -d  ) echo _CVSROOT 2 ; _arg="$2" ;;
   -*  ) warn "Error: Unknown option \"$1\"" ; return 1 ;;
    *  ) echo OTHER ;;
@@ -110,7 +112,7 @@ while [ $# -gt 0 ] ; do
 
      _CVSROOT) CVSROOT="$2" ;;
 
-     _*      ) shift ; eval "_$ch"=on ;;
+     _*      ) eval "_$ch"=on ;;
       *      ) break 2   ;;
     esac
   done
@@ -139,11 +141,13 @@ pkg_dir="${mod}-${rel}"
 
 test ! -d "$pkg_dir" || err "There's already a directory: $pkg_dir"
 
-echo cvs -z3 -d "$CVSROOT" -q export -r "$tag" -d "$pkg_dir" "$mod"
-     cvs -z3 -d "$CVSROOT" -q export -r "$tag" -d "$pkg_dir" "$mod"
+if [ -z "$__checkout" ]
+then cmd="export"
+else cmd="checkout"
+fi
 
-#echo cvs -z3 -d "$CVSROOT" -q co -r "$tag" -d "$pkg_dir" "$mod"
-#     cvs -z3 -d "$CVSROOT" -q co -r "$tag" -d "$pkg_dir" "$mod"
+echo cvs -z3 -d "$CVSROOT" -q "$cmd" -r "$tag" -d "$pkg_dir" "$mod"
+     cvs -z3 -d "$CVSROOT" -q "$cmd" -r "$tag" -d "$pkg_dir" "$mod"
 
 test   -d "$pkg_dir" || err "There is'nt a directory: $pkg_dir"
 
@@ -159,7 +163,7 @@ chmod_pkg "$pkg_dir"
 
 # Create a package ------------------------------------------
 
-test ! -z "$__nopkg$__noremove" && exit 0
+test ! -z "$__nopkg" && exit 0
 
 ( cd "$pkg_dir"
 
