@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.22 2005/07/07 14:58:35 henoheno Exp $
+# $Id: release.sh,v 1.23 2005/09/20 14:37:03 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -18,6 +18,7 @@ usage(){
   warn  "    --nopkg     Suppress creating archive (Extract and chmod only)"
   warn  "    --norm      --nopkg, and remove nothing (.cvsignore etc)"
   warn  "    --co        --norm, and use 'checkout' command instead of 'export'"
+  warn  "    --utf8      Create UTF-8 converted archive (EXPERIMENTAL)"
   warn  "    -z|--zip    Create *.zip archive"
   warn  "    --move-dist Move *.ini.php => *.ini-dist.php"
   warn  "    --copy-dist Move, and Copy *.ini.php <= *.ini-dist.php"
@@ -83,6 +84,7 @@ getopt(){ _arg=noarg
   --norm|--noremove ) echo _nopkg _noremove 1 ;;
   --co|--checkout   ) echo _nopkg _noremove _checkout 1 ;;
   -z|--zip     ) echo _zip 1      ;;
+  --ut|--utf|--utf8|--utf-8 ) echo _utf8 1  ;;
   --copy-dist  ) echo _copy_dist 1 ;;
   --move-dist  ) echo _move_dist 1 ;;
   -d  ) echo _CVSROOT 2 ; _arg="$2" ;;
@@ -122,7 +124,27 @@ done
 # No argument
 if [ $# -eq 0 ] ; then usage ; exit ; fi
 
-# Archiver check --------------------------------------------
+# Utility check ---------------------------------------------
+
+if [ "$__utf8" ] ; then
+  which nkf || err "nkf version 2.0 or later (UTF-8 enabled) not found"
+  nkf_version="` nkf -v 2>&1 | sed -e '/^Network Kanji Filter/!d' -e 's/.* Version \([1-9]\).*/\1/' `"
+  if [ "$nkf_version" = '1' ] ; then
+    err "nkf found but seems 1.x"
+  fi
+  convert(){
+    for list in "$@" ; do
+      # NOTE: Specify '-E'(From EUC-JP) otherwise skin file will be collapse
+      nkf -Ew "$list" > "$list.$$.tmp" && mv "$list.$$.tmp" "$list"
+    done
+  }
+  convert_EUCJP2UTF8(){
+    for list in "$@" ; do
+      # Very rough conversion!
+      sed 's/EUC-JP/UTF-8/g' "$list" > "$list.$$.tmp" && mv "$list.$$.tmp" "$list"
+    done
+  }
+fi > /dev/null
 
 if [ -z "$__zip" ]
 then
@@ -135,7 +157,7 @@ fi > /dev/null
 # Argument check --------------------------------------------
 
 rel="$1"
-tag="` check_versiontag "$rel" `"
+tag="` check_versiontag "$rel" `" || exit 1
 pkg_dir="${mod}-${rel}"
 
 # Export the module -----------------------------------------
@@ -157,6 +179,24 @@ test -z "$__noremove" && {
   echo find "$pkg_dir" -type f -name '.cvsignore' "| xargs rm -f"
        find "$pkg_dir" -type f -name '.cvsignore' | xargs rm -f
 }
+
+# Conversion ------------------------------------------------
+
+if [ "$__utf8" ] ; then
+  echo "Converting EUC-JP => UTF-8 ..."
+  find "$pkg_dir" -type f \( -name "*.txt" -or -name "*.php" -or -name "*.lng"  -or -name "*.dat" \) |
+  while read line; do
+    echo "  $line"
+    convert "$line"
+  done
+
+  # Replace 'EUC-JP' => 'UTF-8'
+  ( cd "$pkg_dir" &&
+    convert_EUCJP2UTF8 lib/init.php skin/pukiwiki.skin*.php
+  )
+
+  # Filename about wiki/*.txt or something  are not coverted yet
+fi
 
 # chmod -----------------------------------------------------
 
