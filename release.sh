@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.23 2005/09/20 14:37:03 henoheno Exp $
+# $Id: release.sh,v 1.24 2005/09/25 10:07:29 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -129,12 +129,12 @@ if [ $# -eq 0 ] ; then usage ; exit ; fi
 if [ "$__utf8" ] ; then
   which nkf || err "nkf version 2.0 or later (UTF-8 enabled) not found"
   nkf_version="` nkf -v 2>&1 | sed -e '/^Network Kanji Filter/!d' -e 's/.* Version \([1-9]\).*/\1/' `"
-  if [ "$nkf_version" = '1' ] ; then
-    err "nkf found but seems 1.x"
+  if [ "$nkf_version" = '1' -o "$nkf_version" = '0' ] ; then
+    err "nkf found but not seems 2.x (UTF-8 enabled) or later"
   fi
   convert(){
     for list in "$@" ; do
-      # NOTE: Specify '-E'(From EUC-JP) otherwise skin file will be collapse
+      # NOTE: Specify '-E'(From EUC-JP) otherwise skin file will be collapsed
       nkf -Ew "$list" > "$list.$$.tmp" && mv "$list.$$.tmp" "$list"
     done
   }
@@ -159,6 +159,10 @@ fi > /dev/null
 rel="$1"
 tag="` check_versiontag "$rel" `" || exit 1
 pkg_dir="${mod}-${rel}"
+
+if [ "$__utf8" ] ; then
+  pkg_dir="${pkg_dir}_utf8"
+fi
 
 # Export the module -----------------------------------------
 
