@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.24 2005/09/25 10:07:29 henoheno Exp $
+# $Id: release.sh,v 1.25 2005/09/25 10:13:23 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -135,7 +135,7 @@ if [ "$__utf8" ] ; then
   convert(){
     for list in "$@" ; do
       # NOTE: Specify '-E'(From EUC-JP) otherwise skin file will be collapsed
-      nkf -Ew "$list" > "$list.$$.tmp" && mv "$list.$$.tmp" "$list"
+      nkf -Ew "$list" > "$list.$$.tmp" && mv "$list.$$.tmp" "$list" && echo "  $list"
     done
   }
   convert_EUCJP2UTF8(){
@@ -190,7 +190,6 @@ if [ "$__utf8" ] ; then
   echo "Converting EUC-JP => UTF-8 ..."
   find "$pkg_dir" -type f \( -name "*.txt" -or -name "*.php" -or -name "*.lng"  -or -name "*.dat" \) |
   while read line; do
-    echo "  $line"
     convert "$line"
   done
 
