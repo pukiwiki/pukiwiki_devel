@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release_update.sh,v 1.11 2005/03/21 14:08:50 henoheno Exp $
+# $Id: release_update.sh,v 1.12 2005/12/10 08:27:00 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -14,6 +14,7 @@ _name="` basename $0 `"
 usage(){
   warn "USAGE: $_name [options] VERSION_FROM VERSION_TO (VERSION = '1.4.3_rc1' like)"
   warn "  Options:"
+  warn  "    -p|--patch  Create a large patch file"
   warn  "    -z|--zip    Create *.zip archive"
   warn  "    --move-dist Move *.ini.php => *.ini-dist.php"
   warn  "    --copy-dist Move, and Copy *.ini.php <= *.ini-dist.php"
@@ -75,6 +76,7 @@ getopt(){ _arg=noarg
   ''  )  echo 1 ;;
   -[hH]|--help ) echo _help _exit ;;
   --debug      ) echo _debug      ;;
+  -p|--patch   ) echo _patch      ;;
   -z|--zip     ) echo _zip        ;;
   --copy-dist  ) echo _copy_dist  ;;
   --move-dist  ) echo _move_dist  ;;
@@ -127,11 +129,25 @@ tag_to="`   check_versiontag "$rel_to"   `" || exit
 
 # -----------------------------------------------------------
 
+# Creating a PATCH
+test "$__patch" && {
+  file="${mod}-${tag_from}-${tag_to}.diff.gz"
+  test ! -f "$file" || err "There's already a file: $file"
+
+  echo $file
+  echo cvs -z3 -d "$CVSROOT" rdiff -u -r "$tag_from" -r "$tag_to" "$mod"
+       cvs -z3 -d "$CVSROOT" rdiff -u -r "$tag_from" -r "$tag_to" "$mod" | gzip -9 > "$file"
+  exit
+}
+# NOT PATCH
+
+
 # Checkout the module with VERSION_FROM
 test ! -d "$pkg_dir" || err "There's already a directory: $pkg_dir"
 echo cvs -z3 -d "$CVSROOT" co -r "$tag_from" -d "$pkg_dir" "$mod"
      cvs -z3 -d "$CVSROOT" co -r "$tag_from" -d "$pkg_dir" "$mod"
 test   -d "$pkg_dir" || err "There isn't a directory: $pkg_dir"
+
 
 # Merge VERSION_FROM to VERSION_TO
 ( cd "$pkg_dir"
