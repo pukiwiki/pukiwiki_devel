@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.25 2005/09/25 10:13:23 henoheno Exp $
+# $Id: release.sh,v 1.26 2006/05/14 15:35:37 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -132,6 +132,11 @@ if [ "$__utf8" ] ; then
   if [ "$nkf_version" = '1' -o "$nkf_version" = '0' ] ; then
     err "nkf found but not seems 2.x (UTF-8 enabled) or later"
   fi
+  encls="./encls.php"
+  if [ ! -f "$encls" ]
+  then err "encls not found"
+  else encls="`pwd`/$encls"
+  fi
   convert(){
     for list in "$@" ; do
       # NOTE: Specify '-E'(From EUC-JP) otherwise skin file will be collapsed
@@ -188,7 +193,7 @@ test -z "$__noremove" && {
 
 if [ "$__utf8" ] ; then
   echo "Converting EUC-JP => UTF-8 ..."
-  find "$pkg_dir" -type f \( -name "*.txt" -or -name "*.php" -or -name "*.lng"  -or -name "*.dat" \) |
+  find "$pkg_dir" -type f \( -name "*.txt" -or -name "*.php" -or -name "*.lng"  -or -name "*.dat" -or -name "*.ref" \) |
   while read line; do
     convert "$line"
   done
@@ -198,7 +203,21 @@ if [ "$__utf8" ] ; then
     convert_EUCJP2UTF8 lib/init.php skin/pukiwiki.skin*.php
   )
 
-  # Filename about wiki/*.txt or something  are not coverted yet
+  # Filename encoded 'encoded-EUC-JP' to 'encoded-UTF-8'
+  echo "Renaming encoded-EUC-JP => encoded-UTF-8 ..."
+  ( cd "$pkg_dir" &&
+    for dir in wiki wiki.en cache; do
+      ( cd "$dir" &&
+        ls *.txt *.ref 2>/dev/null | while read line; do
+	  target="`$encls "$line" 2>/dev/null`"
+	  if [ "x$line" != "x$target" ] ; then
+            echo " " mv "$line" "$target"
+                     mv "$line" "$target" || exit
+	  fi
+        done
+      )
+    done
+  ) || err "stop."
 fi
 
 # chmod -----------------------------------------------------
