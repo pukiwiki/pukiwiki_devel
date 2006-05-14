@@ -1,15 +1,22 @@
 #!/usr/local/bin/php
 <?php
 // PukiWiki - Yet another WikiWikiWeb clone.
-// $Id: encls.php,v 1.1 2006/05/14 09:24:22 henoheno Exp $
+// $Id: encls.php,v 1.2 2006/05/14 15:05:19 henoheno Exp $
 // Copyright (C) 2006 PukiWiki Developers Team
 // License: GPL v2 or (at your option) any later version
 //
 // encoded-EUC-JP.txt -> EUC-JP -> UTF-8 -> encoded-UTF-8.txt
 
+// Error reporting
+error_reporting(0); // Nothing
+//error_reporting(E_ERROR | E_PARSE); // Avoid E_WARNING, E_NOTICE, etc
+//error_reporting(E_ALL); // Debug purpose
+
 // PHP-cli only
 if (php_sapi_name() != 'cli') die('Invalid SAPI');
 if (! isset($argv)) die('PHP too old (Not 4.3.0 of above)');
+
+//////////////////////////////////
 
 $base = basename(array_shift($argv));
 function usage(){
