@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.26 2006/05/14 15:35:37 henoheno Exp $
+# $Id: release.sh,v 1.27 2006/05/30 15:04:03 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -146,7 +146,8 @@ if [ "$__utf8" ] ; then
   convert_EUCJP2UTF8(){
     for list in "$@" ; do
       # Very rough conversion!
-      sed 's/EUC-JP/UTF-8/g' "$list" > "$list.$$.tmp" && mv "$list.$$.tmp" "$list"
+      #sed 's/EUC-JP/UTF-8/g' "$list" > "$list.$$.tmp" && mv "$list.$$.tmp" "$list"
+      sed 's#^//UTF-8:##' "$list" > "$list.$$.tmp" && mv "$list.$$.tmp" "$list"
     done
   }
 fi > /dev/null
