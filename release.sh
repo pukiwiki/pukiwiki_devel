@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.27 2006/05/30 15:04:03 henoheno Exp $
+# $Id: release.sh,v 1.28 2006/06/11 15:00:54 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -209,10 +209,10 @@ if [ "$__utf8" ] ; then
   ( cd "$pkg_dir" &&
     for dir in wiki wiki.en cache; do
       ( cd "$dir" &&
-        ls *.txt *.ref 2>/dev/null | while read line; do
+        ls *.txt *.ref *.rel 2>/dev/null | while read line; do
 	  target="`$encls "$line" 2>/dev/null`"
 	  if [ "x$line" != "x$target" ] ; then
-            echo " " mv "$line" "$target"
+            echo " " mv "$dir/$line" "$dir/$target"
                      mv "$line" "$target" || exit
 	  fi
         done
