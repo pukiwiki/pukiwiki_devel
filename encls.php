@@ -1,7 +1,7 @@
 #!/usr/local/bin/php
 <?php
 // PukiWiki - Yet another WikiWikiWeb clone.
-// $Id: encls.php,v 1.2 2006/05/14 15:05:19 henoheno Exp $
+// $Id: encls.php,v 1.3 2006/06/11 15:01:32 henoheno Exp $
 // Copyright (C) 2006 PukiWiki Developers Team
 // License: GPL v2 or (at your option) any later version
 //
@@ -103,6 +103,8 @@ foreach ($argv as $key => $value) {
 	list($value, $optarg) = explode('=', $value, 2);
 	switch ($value) {
 		case '--all'          : $f_all         = TRUE;    break;
+		case '--decode'       : $f_decode      = TRUE;    break;
+		case '--nocheck'      : $f_nocheck     = TRUE;    break;
 		case '--suffix'       : $suffix        = $optarg; break;
 		case '--encoding_from': $encoding_from = $optarg; break;
 		case '--encoding_to'  : $encoding_to   = $optarg; break;
@@ -118,7 +120,7 @@ if ($f_all && empty($argv)) {
 	$argv = array_keys(get_existpages('.', $suffix));
 } else {
 	foreach ($argv as $arg) {
-		if (! file_exists($arg)) {
+		if (! $f_nocheck && ! file_exists($arg)) {
 			echo 'File not found: ' . $arg . "\n";
 			usage();
 		}
@@ -138,10 +140,15 @@ foreach ($argv as $arg) {
 		$suffix = '';
 	}
 	//echo $name . $suffix . "\n";		// As-is
-	//echo decode($name) . $suffix . "\n";	// Decorded
-	echo encode(mb_convert_encoding(decode($name),
-		TARGET_ENCODING, SOURCE_ENCODING)) .
-		$suffix . "\n";	// Decord -> convert -> encode
+	if ($f_decode) {
+		// Decord
+		echo decode($name) . $suffix . "\n";
+	} else {
+		// Decord -> convert -> encode
+		echo encode(mb_convert_encoding(decode($name),
+			TARGET_ENCODING, SOURCE_ENCODING)) .
+			$suffix . "\n";
+	}
 	//echo "\n";
 }
 ?>
