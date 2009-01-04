@@ -1,10 +1,10 @@
 <?php
 // PukiWiki - Yet another WikiWikiWeb clone.
-// $Id: pkwk14.php,v 1.1 2009/01/04 10:51:30 henoheno Exp $
+// $Id: pkwk14.php,v 1.2 2009/01/04 10:54:05 henoheno Exp $
 // Copyright (C) 2009 PukiWiki Developers Team
 // License: GPL v2 or (at your option) any later version
 //
-// PukiWiki administration script
+// PukiWiki administration script for CLI environment
 
 // Error reporting
 //error_reporting(0); // Nothing
@@ -23,7 +23,7 @@ define('PKWK_CLI_NAME', $argv[0]);
 
 function usage()
 {
-	warn('Usage: ' . PKWK_CLI_NAME);
+	warn('Usage: PKWK_ROOT=path/to/pukiwiki php ' . PKWK_CLI_NAME);
 	exit(1);
 }
 
@@ -115,8 +115,8 @@ default  :
 //require(LIB_DIR . 'init.php');
 
 
-# Load libraries --------------------------------------------
+# Start -----------------------------------------------------
 
-exit(0);
+usage();
 
 ?>
