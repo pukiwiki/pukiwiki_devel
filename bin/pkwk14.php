@@ -1,6 +1,6 @@
 <?php
 // PukiWiki - Yet another WikiWikiWeb clone.
-// $Id: pkwk14.php,v 1.3 2009/01/12 02:58:07 henoheno Exp $
+// $Id: pkwk14.php,v 1.4 2009/01/12 03:50:33 henoheno Exp $
 // Copyright (C) 2009 PukiWiki Developers Team
 // License: GPL v2 or (at your option) any later version
 //
@@ -9,6 +9,7 @@
 
 # Name and Usage --------------------------------------------
 define('PKWK_CLI_NAME', $argv[0]);
+//define('CLI_PATH', rtrim(getcwd(), '/\\'));
 
 function usage()
 {
@@ -32,7 +33,7 @@ error_reporting(E_ALL); // Debug purpose
 function warn($string = ''){ fwrite(STDERR, $string . "\n"); }
 function err( $string = ''){ warn($string); exit(1);  }
 
-function load($filepath)
+function load_once($filepath)
 {
 	if (strpos($filepath, ':') !== FALSE) {
 		err('load: Error: URL-like string');
@@ -48,51 +49,50 @@ function load($filepath)
 
 // PKWK_ROOT
 if (isset($_ENV['PKWK_ROOT'])) {
-	$pkwk_root = rtrim($_ENV['PKWK_ROOT'], '/') . '/';
+	$pkwk_root = rtrim($_ENV['PKWK_ROOT'], '/\\') . '/';
 	if (! file_exists($pkwk_root)) {
 		err('Error: [PKWK_ROOT] No such directory: ' . $pkwk_root);
 	}
-	
 } else {
 	$pkwk_root = './';
 }
 define('PKWK_ROOT', $pkwk_root);
 unset($pkwk_root);
 
-// LIB_DIR
-define('LIB_DIR', PKWK_ROOT . 'lib/');
-
-// DATA_HOME
-define('DATA_HOME', './');
-// Where to
-//   * pukiwiki.ini.php
-
 
 # Load libraries --------------------------------------------
-// From pukiwiki.php
 
-load(LIB_DIR . 'func.php');
-load(LIB_DIR . 'file.php');
-load(LIB_DIR . 'html.php');
-load(LIB_DIR . 'backup.php');
-
-load(LIB_DIR . 'convert_html.php');
-load(LIB_DIR . 'make_link.php');
-load(LIB_DIR . 'diff.php');
-load(LIB_DIR . 'config.php');
-load(LIB_DIR . 'link.php');
-load(LIB_DIR . 'auth.php');
-load(LIB_DIR . 'proxy.php');
-if (! extension_loaded('mbstring')) {
-	load(LIB_DIR . 'mbstring.php');
+define('LIB_DIR', PKWK_ROOT . 'lib' . '/');
+if (! file_exists(LIB_DIR)) {
+	err('Error: LIB_DIR not found: ' . LIB_DIR);
 }
 
-load(LIB_DIR . 'mail.php');
-load(LIB_DIR . 'spam.php');
+load_once(LIB_DIR . 'func.php');
+load_once(LIB_DIR . 'file.php');
+load_once(LIB_DIR . 'html.php');
+load_once(LIB_DIR . 'backup.php');
+
+load_once(LIB_DIR . 'convert_html.php');
+load_once(LIB_DIR . 'make_link.php');
+load_once(LIB_DIR . 'diff.php');
+load_once(LIB_DIR . 'config.php');
+load_once(LIB_DIR . 'link.php');
+load_once(LIB_DIR . 'auth.php');
+load_once(LIB_DIR . 'proxy.php');
+if (! extension_loaded('mbstring')) {
+	load_once(LIB_DIR . 'mbstring.php');
+}
+
+load_once(LIB_DIR . 'mail.php');
+load_once(LIB_DIR . 'spam.php');
 
 
 # Default variables 2 ---------------------------------------
-// From pukiwiki.ini.php
+
+define('DATA_HOME', './');
+// Where to
+//   * pukiwiki.ini.php
+//   * xxx_DIR
 
 if (! defined('LANG'))    define('LANG',    'ja');
 if (! defined('UI_LANG')) define('UI_LANG', LANG);
