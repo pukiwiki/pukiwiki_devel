@@ -1,6 +1,6 @@
 <?php
 // PukiWiki - Yet another WikiWikiWeb clone.
-// $Id: pkwk14.php,v 1.4 2009/01/12 03:50:33 henoheno Exp $
+// $Id: pkwk14.php,v 1.5 2009/01/12 04:19:12 henoheno Exp $
 // Copyright (C) 2009 PukiWiki Developers Team
 // License: GPL v2 or (at your option) any later version
 //
@@ -9,7 +9,7 @@
 
 # Name and Usage --------------------------------------------
 define('PKWK_CLI_NAME', $argv[0]);
-//define('CLI_PATH', rtrim(getcwd(), '/\\'));
+//define('PKWK_CLI_PATH', rtrim(getcwd(), '/\\'));
 
 function usage()
 {
