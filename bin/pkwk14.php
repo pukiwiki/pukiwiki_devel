@@ -1,6 +1,6 @@
 <?php
 // PukiWiki - Yet another WikiWikiWeb clone.
-// $Id: pkwk14.php,v 1.5 2009/01/12 04:19:12 henoheno Exp $
+// $Id: pkwk14.php,v 1.6 2009/01/13 15:06:18 henoheno Exp $
 // Copyright (C) 2009 PukiWiki Developers Team
 // License: GPL v2 or (at your option) any later version
 //
@@ -37,32 +37,39 @@ function load_once($filepath)
 {
 	if (strpos($filepath, ':') !== FALSE) {
 		err('load: Error: URL-like string');
-	} else if (! file_exists($filepath)) {
-		err('load: Error: No such file: ' . $filepath);
 	}
 
 	require_once($filepath);
 }
 
 
-# Default variables -----------------------------------------
+# Environment variables -------------------------------------
 
-// PKWK_ROOT
-if (isset($_ENV['PKWK_ROOT'])) {
-	$pkwk_root = rtrim($_ENV['PKWK_ROOT'], '/\\') . '/';
-	if (! file_exists($pkwk_root)) {
-		err('Error: [PKWK_ROOT] No such directory: ' . $pkwk_root);
+$env_default => array(
+	// ENVIRONMENT     => DEFAULT
+	'PKWK_ROOT'        => '.',
+	'PKWK_LIB_DIR',    => 'lib',
+	'PKWK_PLUGIN_DIR', => 'plugin',
+	'PKWK_SKIN_DIR',   => 'skin',
+	'PKWK_IMAGE_DIR',  => 'image',
+	'PKWK_DATA_HOME'   => '.',
+);
+
+foreach(array_keys($env_default as $key) {
+	if (isset($_ENV[$key])) {
+		$env_default[$key] = rtrim($_ENV[$key], '/\\') . '/';
 	}
-} else {
-	$pkwk_root = './';
 }
-define('PKWK_ROOT', $pkwk_root);
-unset($pkwk_root);
+
+
+//		if (! file_exists($dirs[$key])) {
+//			err('Error: [' . $key . ] No such directory: ' . $dirs[$key]);
+//		}
 
 
 # Load libraries --------------------------------------------
 
-define('LIB_DIR', PKWK_ROOT . 'lib' . '/');
+define('LIB_DIR', $env['PKWK_ROOT'] . '/' . $env['PKWK_LIB_DIR'] . '/');
 if (! file_exists(LIB_DIR)) {
 	err('Error: LIB_DIR not found: ' . LIB_DIR);
 }
