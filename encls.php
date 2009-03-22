@@ -1,7 +1,7 @@
 #!/usr/local/bin/php
 <?php
 // PukiWiki - Yet another WikiWikiWeb clone.
-// $Id: encls.php,v 1.3 2006/06/11 15:01:32 henoheno Exp $
+// $Id: encls.php,v 1.4 2009/03/22 15:38:02 henoheno Exp $
 // Copyright (C) 2006 PukiWiki Developers Team
 // License: GPL v2 or (at your option) any later version
 //
@@ -29,6 +29,8 @@ function usage(){
 	echo '        --suffix         -- Specify suffix (default: .txt)' . "\n";
 	echo '        --encoding_from  -- Specify encoding (default: EUC-JP)' . "\n";
 	echo '        --encoding_to    -- Specify encoding (default: UTF-8)' . "\n";
+	echo '        --nocheck        -- Suppress check if the argument is exists as a file' . "\n";
+	echo '        --decode         -- Just decode() it' . "\n";
 	exit(1);
 }
 
