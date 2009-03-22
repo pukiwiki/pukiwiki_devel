@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.29 2009/03/22 14:15:01 henoheno Exp $
+# $Id: release.sh,v 1.30 2009/03/22 15:41:14 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -140,7 +140,8 @@ if [ "$__utf8" ] ; then
   if [ ! -f "$encls" ]
   then err "encls not found"
   else
-    which php || err "php-cli not found"
+    php="` which php `"        || err "php-cli not found"
+    test -f /usr/local/bin/php || err "/usr/local/bin/php not found (but $php found)"
     encls="`pwd`/$encls"
   fi
 
