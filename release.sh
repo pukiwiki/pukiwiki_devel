@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.28 2006/06/11 15:00:54 henoheno Exp $
+# $Id: release.sh,v 1.29 2009/03/22 14:15:01 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -127,16 +127,23 @@ if [ $# -eq 0 ] ; then usage ; exit ; fi
 # Utility check ---------------------------------------------
 
 if [ "$__utf8" ] ; then
+
+  # nkf
   which nkf || err "nkf version 2.0 or later (UTF-8 enabled) not found"
   nkf_version="` nkf -v 2>&1 | sed -e '/^Network Kanji Filter/!d' -e 's/.* Version \([1-9]\).*/\1/' `"
   if [ "$nkf_version" = '1' -o "$nkf_version" = '0' ] ; then
     err "nkf found but not seems 2.x (UTF-8 enabled) or later"
   fi
+
+  # encls.php
   encls="./encls.php"
   if [ ! -f "$encls" ]
   then err "encls not found"
-  else encls="`pwd`/$encls"
+  else
+    which php || err "php-cli not found"
+    encls="`pwd`/$encls"
   fi
+
   convert(){
     for list in "$@" ; do
       # NOTE: Specify '-E'(From EUC-JP) otherwise skin file will be collapsed
@@ -210,13 +217,13 @@ if [ "$__utf8" ] ; then
     for dir in wiki wiki.en cache; do
       ( cd "$dir" &&
         ls *.txt *.ref *.rel 2>/dev/null | while read line; do
-	  target="`$encls "$line" 2>/dev/null`"
+	  target="`$encls "$line" 2>/dev/null`" || exit 1
 	  if [ "x$line" != "x$target" ] ; then
             echo " " mv "$dir/$line" "$dir/$target"
-                     mv "$line" "$target" || exit
+                     mv "$line" "$target" || exit 1
 	  fi
         done
-      )
+      ) || exit 1
     done
   ) || err "stop."
 fi
