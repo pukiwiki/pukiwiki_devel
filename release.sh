@@ -1,11 +1,11 @@
 #!/bin/sh
-# $Id: release.sh,v 1.30 2009/03/22 15:41:14 henoheno Exp $
+# $Id: release.sh,v 1.31 2011/01/13 15:43:22 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
-   Copyright='(C) 2002-2004 minix-up project, All Rights Reserved'
+   Copyright='(C) 2002-2004,2011 minix-up project, All Rights Reserved'
    Homepage='http://cvsknit.sourceforge.net/'
-   License='BSD Licnese, NO WARRANTY'
+   License='(also revised)BSD Licnese, NO WARRANTY'
 #
 
 # Name and Usage --------------------------------------------
