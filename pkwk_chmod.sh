@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: pkwk_chmod.sh,v 1.1 2011/01/16 12:18:26 henoheno Exp $
+# $Id: pkwk_chmod.sh,v 1.2 2011/01/16 14:46:57 henoheno Exp $
 #  ==========================================================
    Copyright='(C) 2002-2004 minix-up project, All Rights Reserved'
    Homepage='http://cvsknit.sourceforge.net/'
@@ -50,7 +50,7 @@ list_files()
 
 # Validate
 if ! check_dir ` list_dir ` ; then
-  echo 'ERROR: Seems not pukiwiki root directory'
+  echo 'ERROR: Seems not pukiwiki DATA_HOME'
   exit 1
 fi
 
