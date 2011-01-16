@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: pkwk_chmod.sh,v 1.8 2011/01/16 15:06:46 henoheno Exp $
+# $Id: pkwk_chmod.sh,v 1.9 2011/01/16 15:18:41 henoheno Exp $
 #  Chmod script for PukiWiki DATA_HOME
 #  ==========================================================
    Copyright='(C) 2002-2004 minix-up project, All Rights Reserved'
@@ -63,9 +63,10 @@ done
 # ERRATA
 chmod a-x INSTALL.txt image/b_pukiwiki.official.png
 
-chmod o+r *.php */*.php image/*.png image/face/*.png */index.html
+chmod o+r .ht* */.htaccess *.php */*.php image/*.png image/face/*.png */index.html
 chmod o+rx lib skin plugin image image/face
 
 #chmod o+rx doc
 #chmod o+r *.txt doc/*.txt
 
+# .htaccess
