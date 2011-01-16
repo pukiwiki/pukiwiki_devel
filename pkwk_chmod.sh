@@ -1,14 +1,11 @@
 #!/bin/sh
-# $Id: pkwk_chmod.sh,v 1.7 2011/01/16 15:05:08 henoheno Exp $
+# $Id: pkwk_chmod.sh,v 1.8 2011/01/16 15:06:46 henoheno Exp $
+#  Chmod script for PukiWiki DATA_HOME
 #  ==========================================================
    Copyright='(C) 2002-2004 minix-up project, All Rights Reserved'
    Homepage='http://cvsknit.sourceforge.net/'
    License='(also revised)BSD Licnese, NO WARRANTY'
 #
-
-
-#    chmod 777 attach backup cache counter diff trackback wiki* 2>/dev/null
-#    chmod 666 wiki*/*.txt cache/*.dat cache/*.ref cache/*.rel  2>/dev/null
 
 check_dir()
 {
