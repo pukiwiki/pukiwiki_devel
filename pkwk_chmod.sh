@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: pkwk_chmod.sh,v 1.3 2011/01/16 14:50:06 henoheno Exp $
+# $Id: pkwk_chmod.sh,v 1.4 2011/01/16 14:50:37 henoheno Exp $
 #  ==========================================================
    Copyright='(C) 2002-2004 minix-up project, All Rights Reserved'
    Homepage='http://cvsknit.sourceforge.net/'
@@ -8,7 +8,7 @@
 
 
 # chmod o+r *.php */*.php
-# chmod o+r lib skin plugin image image/face doc
+# chmod o+rx lib skin plugin image image/face doc
 #    chmod 777 attach backup cache counter diff trackback wiki* 2>/dev/null
 #    chmod 666 wiki*/*.txt cache/*.dat cache/*.ref cache/*.rel  2>/dev/null
 
