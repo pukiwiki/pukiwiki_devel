@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: pkwk_chmod.sh,v 1.5 2011/01/16 14:54:11 henoheno Exp $
+# $Id: pkwk_chmod.sh,v 1.6 2011/01/16 14:56:21 henoheno Exp $
 #  ==========================================================
    Copyright='(C) 2002-2004 minix-up project, All Rights Reserved'
    Homepage='http://cvsknit.sourceforge.net/'
@@ -67,4 +67,4 @@ done
 chmod a-x image/b_pukiwiki.official.png
 
 chmod o+r *.php */*.php image/*.png image/face/*.png */index.html
-chmod o+rx lib skin plugin image image/face doc
+chmod o+rx lib skin plugin image image/face # doc
