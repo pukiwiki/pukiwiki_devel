@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: pkwk_chmod.sh,v 1.9 2011/01/16 15:18:41 henoheno Exp $
+# $Id: pkwk_chmod.sh,v 1.10 2011/01/24 15:12:51 henoheno Exp $
 #  Chmod script for PukiWiki DATA_HOME
 #  ==========================================================
    Copyright='(C) 2002-2004 minix-up project, All Rights Reserved'
@@ -38,7 +38,7 @@ list_files()
          find "$dir" -type f -name '*.log'
       ;;
       backup ) find "$dir" -type f \( -name '*.txt' -or -name '*.gz'     \) ;;
-      cache  ) find "$dir" -type f \( -name '*.dat' -or -name '*.re[fl]' \) ;;
+      cache  ) find "$dir" -type f \( -name '*.dat' -or -name '*.re[fl]' -or -name '*.lock' \) ;;
       *      ) find "$dir" -type f -name '*.txt' ;;
     esac
   done
