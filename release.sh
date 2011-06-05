@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.34 2011/06/05 14:22:24 henoheno Exp $
+# $Id: release.sh,v 1.35 2011/06/05 14:22:51 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -47,7 +47,7 @@ check_versiontag(){
     [1-9].[0-9].[0-9]_[a-z]* | [1-9].[0-9].[0-9][0-9]_[a-z]* ) tag="r$1" ;;
     [1-9].[0-9].[0-9]_[1-9]  | [1-9].[0-9].[0-9][0-9]_[1-9]  ) tag="r$1" ;;
     [1-9].[0-9].[0-9]_[1-9]_[a-z]*  | [1-9].[0-9].[0-9][0-9]_[1-9]_[a-z]*  ) tag="r$1" ;;
-    HEAD | r1_3_3_branch | branch_r1* ) tag="$rel" ;;
+    HEAD | r1_3_3_branch | branch_r* ) tag="$rel" ;;
     '' ) usage ; return 1 ;;
      * ) warn "Error: Invalid string: $1" ; usage ; return 1 ;;
   esac
