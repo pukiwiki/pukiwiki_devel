@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: release.sh,v 1.32 2011/05/30 15:06:56 henoheno Exp $
+# $Id: release.sh,v 1.33 2011/06/05 14:15:32 henoheno Exp $
 # $CVSKNIT_Id: release.sh,v 1.11 2004/05/28 14:26:24 henoheno Exp $
 #  Release automation script for PukiWiki
 #  ==========================================================
@@ -203,7 +203,10 @@ if [ "$__utf8" ] ; then
   echo "Converting EUC-JP => UTF-8 ..."
   find "$pkg_dir" -type f \( -name "*.txt" -or -name "*.php" -or -name "*.lng"  -or -name "*.dat" -or -name "*.ref" \) |
   while read line; do
-    convert "$line"
+    case "$line" in
+      "$pkg_dir"/zh-CN.lng.php ) ;; # UTF-8 already, Do nothing
+      * ) convert "$line" ;;
+    esac
   done
 
   # Replace 'EUC-JP' => 'UTF-8'
