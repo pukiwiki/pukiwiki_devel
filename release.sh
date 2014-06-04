@@ -22,6 +22,9 @@ usage(){
   warn  "    -z|--zip    Create *.zip archive"
   warn  "    --move-dist Move *.ini.php => *.ini-dist.php"
   warn  "    --copy-dist Move, and Copy *.ini.php <= *.ini-dist.php"
+  warn  "    --git       Use git repository"
+  warn  "    --repo <repository> Git repository_url"
+  warn  "    --name <distname> package_name"
   return 1
 }
 
@@ -88,6 +91,9 @@ getopt(){ _arg=noarg
   --copy-dist  ) echo _copy_dist 1 ;;
   --move-dist  ) echo _move_dist 1 ;;
   -d  ) echo _CVSROOT 2 ; _arg="$2" ;;
+  --git ) echo _git 1 ;;
+  --repo ) echo _gitrepo 2 ; _arg="$2" ;;
+  --name ) echo _pkg_name 2 ; _arg="$2" ;;
   -*  ) warn "Error: Unknown option \"$1\"" ; return 1 ;;
    *  ) echo OTHER ;;
   esac
@@ -114,6 +120,8 @@ while [ $# -gt 0 ] ; do
      _help   ) usage     ;;
 
      _CVSROOT) CVSROOT="$2" ;;
+     _gitrepo) gitrepo="$2" ;;
+     _pkg_name) pkg_name="$2" ;;
 
      _*      ) eval "_$ch"=on ;;
       *      ) break 2   ;;
@@ -170,15 +178,19 @@ fi > /dev/null
 # Argument check --------------------------------------------
 
 rel="$1"
-tag="` check_versiontag "$rel" `" || exit 1
-pkg_dir="${mod}-${rel}"
 
-if [ "$__utf8" ] ; then
-  pkg_dir="${pkg_dir}_utf8"
+if [ "$pkg_name" ] ; then
+  pkg_dir="$pkg_name"
+  tag="$rel"
+else
+  tag="` check_versiontag "$rel" `" || exit 1
+  pkg_dir="${mod}-${rel}"
+  if [ "$__utf8" ] ; then
+    pkg_dir="${pkg_dir}_utf8"
+  fi
 fi
 
 # Export the module -----------------------------------------
-
 test ! -d "$pkg_dir" || err "There's already a directory: $pkg_dir"
 
 if [ -z "$__checkout" ]
@@ -186,16 +198,27 @@ then cmd="export"
 else cmd="checkout"
 fi
 
-echo cvs -z3 -d "$CVSROOT" -q "$cmd" -r "$tag" -d "$pkg_dir" "$mod"
-     cvs -z3 -d "$CVSROOT" -q "$cmd" -r "$tag" -d "$pkg_dir" "$mod"
+if [ "$__git" ] ; then
+  echo git clone --depth 10 --branch "$tag" "$gitrepo" "$pkg_dir"
+       git clone --depth 10 --branch "$tag" "$gitrepo" "$pkg_dir"
+else
+  exit
+  echo cvs -z3 -d "$CVSROOT" -q "$cmd" -r "$tag" -d "$pkg_dir" "$mod"
+       cvs -z3 -d "$CVSROOT" -q "$cmd" -r "$tag" -d "$pkg_dir" "$mod"
+fi
 
 test   -d "$pkg_dir" || err "There isn't a directory: $pkg_dir"
 
 # Remove '.cvsignore' if exists -----------------------------
 test -z "$__noremove" && {
+  if [ "$__git" ] ; then
+    echo rm -rf "$pkg_dir/.git"
+         rm -rf "$pkg_dir/.git"
+  fi
   echo find "$pkg_dir" -type f -name '.cvsignore' "| xargs rm -f"
        find "$pkg_dir" -type f -name '.cvsignore' | xargs rm -f
 }
+
 
 # Conversion ------------------------------------------------
 
