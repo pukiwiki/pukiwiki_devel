@@ -199,8 +199,13 @@ else cmd="checkout"
 fi
 
 if [ "$__git" ] ; then
-  echo git clone --depth 10 --branch "$tag" "$gitrepo" "$pkg_dir"
-       git clone --depth 10 --branch "$tag" "$gitrepo" "$pkg_dir"
+  echo git clone "$gitrepo" "$pkg_dir"
+       git clone "$gitrepo" "$pkg_dir"
+  echo cd $pkg_dir 
+  cd $pkg_dir 
+  echo git reset --hard "$tag"
+       git reset --hard "$tag"
+  cd ..
 else
   exit
   echo cvs -z3 -d "$CVSROOT" -q "$cmd" -r "$tag" -d "$pkg_dir" "$mod"
