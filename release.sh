@@ -205,6 +205,15 @@ if [ "$__git" ] ; then
   cd $pkg_dir 
   echo git reset --hard "$tag"
        git reset --hard "$tag"
+
+  # Set file timestamp
+  for FILE in $(git ls-files); do
+    TIME=$(git log --pretty=format:%ci -n1 $FILE)
+    echo $TIME'\t'$FILE
+    STAMP=$(date -d "$TIME" +"%y%m%d%H%M.%S")
+    touch -t $STAMP $FILE
+  done
+
   cd ..
 else
   exit
